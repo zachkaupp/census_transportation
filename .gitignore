@@ -4,6 +4,7 @@ data/metadata/
 data/raw/*.csv
 data/clean/acs_data
 data/clean/acs_id
+data/clean/travel_time
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
