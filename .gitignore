@@ -2,6 +2,8 @@
 workspace.ipynb
 data/metadata/
 data/raw/*.csv
+data/clean/acs_data
+data/clean/acs_id
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
