@@ -41,7 +41,7 @@ def main():
     df = df.rename(columns={"GEOID": "ID"})
 
     # store in pickle
-    df.to_pickle(fp+"/clean/travel_time", compression=None)
+    df.to_pickle(fp+"/clean/travel_time.pkl", compression=None)
 
 if __name__ == "__main__":
     main()

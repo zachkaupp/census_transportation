@@ -29,3 +29,8 @@ https://catalog.data.gov/dataset/means-of-transportation-to-work2
 
 Life expectancy:
 https://www.cdc.gov/nchs/nvss/usaleep/usaleep.html#life-expectancy
+
+### Future updates to increase accuracy
+- Average life expectancy should be weighted by population for each census tract
+- Take data strictly from the same years
+- Investigate missing values instead of removing any features with missing values

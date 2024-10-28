@@ -2,9 +2,7 @@
 workspace.ipynb
 data/metadata/
 data/raw/*.csv
-data/clean/acs_data
-data/clean/acs_id
-data/clean/travel_time
+data/clean/*.pkl
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

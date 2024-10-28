@@ -39,10 +39,9 @@ def main():
 
     # result:
     # df = raw percentages
-    df.to_pickle(fp+"clean/acs_data", compression=None)
+    df.to_pickle(fp+"clean/acs_data.pkl", compression=None)
     # df_id = ID and county name corresponding to df by row
-    df_id.to_pickle(fp+"clean/acs_id", compression=None)
-    df_id.head()
+    df_id.to_pickle(fp+"clean/acs_id.pkl", compression=None)
 
 if __name__ == "__main__":
     main()
