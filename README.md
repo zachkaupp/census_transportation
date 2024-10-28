@@ -30,6 +30,9 @@ https://catalog.data.gov/dataset/means-of-transportation-to-work2
 Life expectancy:
 https://www.cdc.gov/nchs/nvss/usaleep/usaleep.html#life-expectancy
 
+#### Things to know:
+- ID = unique code that matches to county by federal standards
+
 ### Future updates to increase accuracy
 - Average life expectancy should be weighted by population for each census tract
 - Take data strictly from the same years
