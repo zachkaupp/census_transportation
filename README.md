@@ -1,5 +1,23 @@
 # census_transportation
 
+### Install
+```py
+git clone https://github.com/zachkaupp/census_transportation.git
+
+cd census_transportation
+
+# REQUIRED: populate /data/raw
+
+pip3 install -r requirements.txt
+
+python3 census_transportation
+```
+### Data Files
+- Use these files to populate /data/raw
+- https://drive.google.com/drive/folders/1uQxTdbvacpcF2xq0uUvV_bXFjqfNhCZX?usp=sharing
+
+### Project Notes
+
 Goal: Find ways to practice pytorch with these datasets
 
 Demographics:
