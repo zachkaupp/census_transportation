@@ -10,7 +10,7 @@ cd census_transportation
 
 pip3 install -r requirements.txt
 
-python3 census_transportation
+python3 -m census_transportation
 ```
 ### Data Files
 - Use these files to populate /data/raw
