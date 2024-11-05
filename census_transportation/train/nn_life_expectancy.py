@@ -53,7 +53,7 @@ def train(dataloader, model, loss_fn, optimizer, device):
             #print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
             pass
 
-def test(dataloader, model, loss_fn, device):
+def test(dataloader, model, loss_fn, device, out=True):
     """test(dataloader, model, loss_fn, device)"""
     #size = len(dataloader.dataset)
     num_batches = len(dataloader)
@@ -65,7 +65,9 @@ def test(dataloader, model, loss_fn, device):
             pred = model(x)
             test_loss += loss_fn(pred, y)
     test_loss /= num_batches
-    print(f"Avg loss = {test_loss:>8f}")
+    if out:
+        print(f"Avg loss = {test_loss:>8f}")
+    return test_loss
 
 def train_val_dataset(dataset, val_split=0.25):
     """train_val_dataset(dataset, val_split)"""
@@ -75,7 +77,7 @@ def train_val_dataset(dataset, val_split=0.25):
     datasets['val'] = Subset(dataset, val_idx)
     return datasets
 
-def main():
+def main(learn_rate=1e-3, epochs=10, out=True):
     """main()"""
     torch.serialization.add_safe_globals([TensorDataset])
     dataset = torch.load(fp+"tensor_dataset/life_expectancy.pt", weights_only=True)
@@ -94,16 +96,21 @@ def main():
 
     model = NeuralNetwork().to(device)
     loss_fn = nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-2)
+    optimizer = torch.optim.Adam(model.parameters(), lr=learn_rate)
 
-    epochs = 10
+    loss_list = []
     for t in range(epochs):
-        print(f"Epoch {t+1}: ", end="")
+        if out:
+            print(f"Epoch {t+1}: ", end="")
         train(train_loader, model, loss_fn, optimizer, device)
-        test(test_loader, model, loss_fn, device)
+        loss_list.append(test(test_loader, model, loss_fn, device, out))
 
     torch.save(model.state_dict(), fp+"models/nn_life_expectancy.pth")
-    print("Saved model state to nn_life_expectancy.pth")
+    if out:
+        print("Saved model state to nn_life_expectancy.pth")
+
+    # return loss for each epoch to graph later
+    return loss_list
 
 if __name__ == "__main__":
     main()

@@ -34,7 +34,6 @@ def main():
     # convert to tensor dataset
     dataset = data_utils.TensorDataset(data, labels)
     torch.save(dataset, fp+"tensor_dataset/life_expectancy.pt")
-    print("Saved dataset to life_expectancy.pt")
 
 if __name__ == "__main__":
     main()
