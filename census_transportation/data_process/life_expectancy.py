@@ -27,7 +27,7 @@ def main():
     df = df.rename(columns={"Tract ID": "ID", "e(0)":"life_expectancy"})
 
     # truncate ID to county
-    df["ID"] = df["ID"].apply(lambda x : x // 100000)
+    df["ID"] = df["ID"].apply(lambda x : x // 1000000)
 
     # average out life expectancy by census tract
     # without weighting by population
