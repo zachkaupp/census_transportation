@@ -6,3 +6,5 @@
 
 #### resources
 https://discuss.pytorch.org/t/dataset-from-pandas-without-folder-structure/146816
+
+https://discuss.pytorch.org/t/how-to-split-dataset-into-test-and-validation-sets/33987/5

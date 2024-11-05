@@ -4,17 +4,16 @@ zachkaupp@gmail.com
 """
 
 import os
-import numpy as np
 import pandas as pd
+from sklearn.model_selection import train_test_split
 import torch
 from torch import nn
-from torch.utils.data import DataLoader
-import torch.utils.data as data_utils
+from torch.utils.data import DataLoader, Subset, TensorDataset
 
 # open file to know how many input values to have in the model
 cur_dir = os.path.dirname(__file__)
 fp = os.path.join(cur_dir, '../../data/')
-    # import ACS
+# import ACS
 acs_data_df = pd.read_pickle(fp+"clean/acs_data.pkl")
 
 class NeuralNetwork(nn.Module):
@@ -66,39 +65,24 @@ def test(dataloader, model, loss_fn, device):
             pred = model(x)
             test_loss += loss_fn(pred, y)
     test_loss /= num_batches
-    print(f"Avg loss: {test_loss:>8f} \n")
+    print(f"Avg loss = {test_loss:>8f}")
+
+def train_val_dataset(dataset, val_split=0.25):
+    """train_val_dataset(dataset, val_split)"""
+    train_idx, val_idx = train_test_split(list(range(len(dataset))), test_size=val_split)
+    datasets = {}
+    datasets['train'] = Subset(dataset, train_idx)
+    datasets['val'] = Subset(dataset, val_idx)
+    return datasets
 
 def main():
     """main()"""
-    # first, format datasets and convert to dataloader
-    acs_id_df = pd.read_pickle(fp+"clean/acs_id.pkl")
-    acs_data_df = pd.read_pickle(fp+"clean/acs_data.pkl") #pylint: disable=W0621
-    le_df = pd.read_pickle(fp+"clean/life_expectancy.pkl")
-    # make sure the rows match
-    le_df = le_df[le_df["ID"].isin(acs_id_df["ID"].tolist())]
-    acs_data_df = acs_data_df[acs_id_df["ID"].isin(le_df["ID"].tolist())]
-    # combine labels (life expectancy) with data (acs)
-    acs_data_df.index = le_df.index
-    df = pd.concat([le_df,acs_data_df], axis=1)
-    # convert to tensors
-    train_labels_df = df.iloc[:-300, 1]
-    train_data_df = df.iloc[:-300, 2:]
-    test_labels_df = df.iloc[-300:, 1]
-    test_data_df = df.iloc[-300:, 2:]
-    train_labels = torch.from_numpy(train_labels_df.values.astype(np.float32))
-    train_data = torch.from_numpy(train_data_df.values.astype(np.float32))
-    test_labels = torch.from_numpy(test_labels_df.values.astype(np.float32))
-    test_data = torch.from_numpy(test_data_df.values.astype(np.float32))
-    # make sure data has the right dimensions
-    train_labels = train_labels.unsqueeze(1)
-    test_labels = test_labels.unsqueeze(1)
-    # convert to tensor dataset
-    train_dataset = data_utils.TensorDataset(train_data, train_labels)
-    test_dataset = data_utils.TensorDataset(test_data, test_labels)
-    #print(train_dataset[0])
+    torch.serialization.add_safe_globals([TensorDataset])
+    dataset = torch.load(fp+"tensor_dataset/life_expectancy.pt", weights_only=True)
+    datasets = train_val_dataset(dataset, .25)
     # create dataloaders
-    train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-    test_loader = DataLoader(test_dataset, batch_size=64, shuffle=True)
+    train_loader = DataLoader(datasets["train"], batch_size=64, shuffle=True)
+    test_loader = DataLoader(datasets["val"], batch_size=64, shuffle=True)
 
     device = (
         "cuda"
@@ -114,10 +98,9 @@ def main():
 
     epochs = 10
     for t in range(epochs):
-        print(f"Epoch {t+1}:", end="")
+        print(f"Epoch {t+1}: ", end="")
         train(train_loader, model, loss_fn, optimizer, device)
         test(test_loader, model, loss_fn, device)
-        print("\n")
 
     torch.save(model.state_dict(), fp+"models/nn_life_expectancy.pth")
     print("Saved model state to nn_life_expectancy.pth")

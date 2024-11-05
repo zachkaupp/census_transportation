@@ -8,8 +8,14 @@ from .data_process.travel_time import main as process_travel_time
 from .data_process.life_expectancy import main as process_life_expectancy
 from .data_process.means_of_transport import main as process_means_of_transport
 
+from .to_tensor.life_expectancy import main as to_tensor_life_expectancy
+
+from .train.nn_life_expectancy import main as train_life_expectancy
+
+
 def main():
     """main()"""
+    # data_process ------------------------
     print("Cleaning data files...")
     try:
         process_acs()
@@ -37,6 +43,26 @@ def main():
         print("Cleaned means_of_transportation_to_work.csv")
     except Exception as e:
         print("Failed to clean means_of_transportation_to_work.csv")
+        raise e
+
+    # to_tensor ----------------------------------
+    print("Converting dataframes to TensorDataset...")
+
+    try:
+        to_tensor_life_expectancy()
+        print("Created life_expectancy.pt dataset")
+    except Exception as e:
+        print("Failed to create life_expectancy.pt dataset")
+        raise e
+
+    # train ----------------------------------------
+    print("Training models...")
+
+    try:
+        train_life_expectancy()
+        print("Trained nn_life_expectancy.pth")
+    except Exception as e:
+        print("Failed to train nn_life_expectancy.pth")
         raise e
 
 if __name__ == "__main__":
