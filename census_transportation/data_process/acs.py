@@ -43,5 +43,7 @@ def main():
     # df_id = ID and county name corresponding to df by row
     df_id.to_pickle(fp+"clean/acs_id.pkl", compression=None)
 
+    return (df,df_id)
+
 if __name__ == "__main__":
     main()

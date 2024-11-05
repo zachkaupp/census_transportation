@@ -22,7 +22,9 @@ class NeuralNetwork(nn.Module):
         super().__init__()
         self.flatten = nn.Flatten(start_dim=1)
         self.stack = nn.Sequential(
-            nn.Linear(len(acs_data_df.columns), 1)
+            nn.Linear(len(acs_data_df.columns), 50),
+            nn.ReLU(),
+            nn.Linear(50,1)
         )
 
     def forward(self, x):

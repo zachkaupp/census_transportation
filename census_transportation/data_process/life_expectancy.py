@@ -40,6 +40,8 @@ def main():
 
     df.to_pickle(fp+"clean/life_expectancy.pkl")
 
+    return df
+
 
 if __name__ == "__main__":
     main()

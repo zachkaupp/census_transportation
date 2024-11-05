@@ -3,7 +3,7 @@ workspace.ipynb
 data/metadata/
 data/raw/*.csv
 data/clean/*.pkl
-data/models
+data/models/*.pth
 data/tensor_dataset/*.pt
 
 # Byte-compiled / optimized / DLL files

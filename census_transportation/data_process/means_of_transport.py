@@ -43,5 +43,7 @@ def main():
     # store in pickle
     df.to_pickle(fp+"/clean/means_of_transport.pkl", compression=None)
 
+    return df
+
 if __name__ == "__main__":
     main()
