@@ -37,3 +37,4 @@ https://www.cdc.gov/nchs/nvss/usaleep/usaleep.html#life-expectancy
 - Average life expectancy should be weighted by population for each census tract
 - Take data strictly from the same years
 - Investigate missing values instead of removing any features with missing values
+- implement a learning rate scheduler to decrease learning rate as model converges

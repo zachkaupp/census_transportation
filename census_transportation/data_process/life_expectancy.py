@@ -34,9 +34,13 @@ def main():
     df = df.groupby("ID", as_index=False).mean()
 
     # scale expectancy between 0-1
-    mn = df.iloc[:,1].min()
-    mx = df.iloc[:,1].max()
-    df.iloc[:,1] = df.iloc[:,1].apply(lambda x: (x - mn)/(mx-mn))
+    #mn = df.iloc[:,1].min()
+    #mx = df.iloc[:,1].max()
+    #df.iloc[:,1] = df.iloc[:,1].apply(lambda x: (x - mn)/(mx-mn))
+    #^previously scaled from 0-1, I decided this was unnecessary
+    mean = df.iloc[:,1]
+    df.iloc[:,1] = df.iloc[:,1].apply(lambda x: (x - mean))
+    #scaled to have mean of 0 instead
 
     df.to_pickle(fp+"clean/life_expectancy.pkl")
 

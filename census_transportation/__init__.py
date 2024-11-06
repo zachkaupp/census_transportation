@@ -7,7 +7,7 @@ from .data_process.travel_time import main as process_travel_time
 from .data_process.life_expectancy import main as process_life_expectancy
 from .data_process.means_of_transport import main as process_means_of_transport
 
-from .to_tensor.life_expectancy import main as to_tensor_life_expectancy
+from .to_tensor.acs_life_expectancy import main as to_tensor_acs_life_expectancy
 
-from .train.nn_life_expectancy import main as train_life_expectancy
-from .train.nn_life_expectancy import NeuralNetwork as model_life_expectancy
+from .train.nn_acs_life_expectancy import main as train_acs_life_expectancy
+from .train.nn_acs_life_expectancy import NeuralNetwork as model_acs_life_expectancy

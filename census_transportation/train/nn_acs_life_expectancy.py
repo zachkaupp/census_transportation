@@ -24,8 +24,14 @@ class NeuralNetwork(nn.Module):
         self.stack = nn.Sequential(
             nn.Linear(len(acs_data_df.columns), 50),
             nn.ReLU(),
+            nn.Linear(50,50),
+            nn.ReLU(),
             nn.Linear(50,1)
         )
+        # notes
+        # BatchNorm made model very unpredictable
+        # 3 linear layers and 2 relu did not work better
+        #   than 2 linear and 1 relu
 
     def forward(self, x):
         """forward(self, x)"""
@@ -82,7 +88,7 @@ def train_val_dataset(dataset, val_split=0.25):
 def main(learn_rate=1e-3, epochs=10, out=True):
     """main()"""
     torch.serialization.add_safe_globals([TensorDataset])
-    dataset = torch.load(fp+"tensor_dataset/life_expectancy.pt", weights_only=True)
+    dataset = torch.load(fp+"tensor_dataset/acs_life_expectancy.pt", weights_only=True)
     datasets = train_val_dataset(dataset, .25)
     # create dataloaders
     train_loader = DataLoader(datasets["train"], batch_size=64, shuffle=True)
@@ -107,9 +113,9 @@ def main(learn_rate=1e-3, epochs=10, out=True):
         train(train_loader, model, loss_fn, optimizer, device)
         loss_list.append(test(test_loader, model, loss_fn, device, out))
 
-    torch.save(model.state_dict(), fp+"models/nn_life_expectancy.pth")
+    torch.save(model.state_dict(), fp+"models/nn_acs_life_expectancy.pth")
     if out:
-        print("Saved model state to nn_life_expectancy.pth")
+        print("Saved model state to nn_acs_life_expectancy.pth")
 
     # return loss for each epoch to graph later
     return loss_list

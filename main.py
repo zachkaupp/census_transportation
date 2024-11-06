@@ -6,6 +6,7 @@ zachkaupp@gmail.com
 import os
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import torch
 from torch.utils.data import TensorDataset
 import census_transportation as ct
@@ -14,18 +15,18 @@ cur_dir = os.path.dirname(__file__)
 fp = os.path.join(cur_dir, 'data/')
 
 def data_transform():
-    """data_transform()"""
+    """perform all necessary data cleaning and processing"""
     ct.process_acs()
     ct.process_life_expectancy()
     ct.process_travel_time()
     ct.process_means_of_transport()
-    ct.to_tensor_life_expectancy()
+    ct.to_tensor_acs_life_expectancy()
 
 def life_expectancy_epoch_test(epochs=10, learn_rate=1e-3):
-    """life_expectancy_epoch_test()"""
+    """train several models with a given number of epochs and track average loss by epoch"""
     losses = []
-    for i in range(20):
-        losses.append(ct.train_life_expectancy(learn_rate=learn_rate, epochs=epochs, out=False))
+    for i in range(15):
+        losses.append(ct.train_acs_life_expectancy(learn_rate=learn_rate, epochs=epochs, out=False))
         print(f"Trained model #{i}")
     avg_loss = []
     for i in range(len(losses[0])):
@@ -36,17 +37,16 @@ def life_expectancy_epoch_test(epochs=10, learn_rate=1e-3):
     print(avg_loss)
     x = []
     y = []
-    exclude = 2
+    exclude = 4
     for i,j in enumerate(avg_loss[exclude:]):
         x.append(i+exclude)
         y.append(j)
     plt.close()
     plt.scatter(x,y)
     plt.show()
-    # does slightly better than the standard deviation of life expectancy
 
 def life_expectancy_val_test(idx=0):
-    """life_expectancy_val_test()"""
+    """print prediction and actual value for given row index"""
     device = (
         "cuda"
         if torch.cuda.is_available()
@@ -55,11 +55,11 @@ def life_expectancy_val_test(idx=0):
         else "cpu"
     )
     torch.serialization.add_safe_globals([TensorDataset])
-    model = ct.model_life_expectancy()
-    model.load_state_dict(torch.load(fp+"models/nn_life_expectancy.pth", weights_only=True))
+    model = ct.model_acs_life_expectancy()
+    model.load_state_dict(torch.load(fp+"models/nn_acs_life_expectancy.pth", weights_only=True))
     model.to(device,dtype=torch.float32)
     model.eval()
-    data = torch.load(fp+"tensor_dataset/life_expectancy.pt", weights_only=True)
+    data = torch.load(fp+"tensor_dataset/acs_life_expectancy.pt", weights_only=True)
     x,y = data[idx]
     x,y = x.to(device=device,dtype=torch.float32), y.to(device=device,dtype=torch.float32)
     x,y = x.unsqueeze(1), y.unsqueeze(1)
@@ -67,7 +67,43 @@ def life_expectancy_val_test(idx=0):
     print(pred.item())
     print(y.item())
 
+def life_expectancy_model_vs_mean():
+    """compare model predictions with constant mean prediction"""
+    device = (
+        "cuda"
+        if torch.cuda.is_available()
+        else "mps"
+        if torch.backends.mps.is_available()
+        else "cpu"
+    )
+    torch.serialization.add_safe_globals([TensorDataset])
+    model = ct.model_acs_life_expectancy()
+    model.load_state_dict(torch.load(fp+"models/nn_acs_life_expectancy.pth", weights_only=True))
+    model.to(device,dtype=torch.float32)
+    model.eval()
+    data = torch.load(fp+"tensor_dataset/acs_life_expectancy.pt", weights_only=True)
+
+    df = pd.read_pickle(fp+"clean/life_expectancy.pkl")
+    mean = df.iloc[:,1].mean()
+
+    # I know this can be more efficient by doing it all at the same time,
+    # but right now this is easiest for me
+    model_error = 0
+    mean_error = 0
+    for x,y in data:
+        x,y = x.to(device=device,dtype=torch.float32), y.to(device=device,dtype=torch.float32)
+        x,y = x.unsqueeze(1), y.unsqueeze(1)
+        pred = model(torch.transpose(x,0,1))
+        model_error += abs(pred.item() - y.item())
+        mean_error += abs(mean - y.item())
+    model_error /= len(data)
+    mean_error /= len(data)
+    print(f"Average error by guessing with model: {model_error:.3f} years")
+    print(f"Average error by guessing with mean: {mean_error:.3f} years")
+
 
 if __name__ == "__main__":
-    data_transform()
-    life_expectancy_epoch_test(epochs=100, learn_rate=1e-4)
+    #data_transform()
+    #life_expectancy_epoch_test(epochs=100, learn_rate=1e-3)
+    #ct.train_acs_life_expectancy(learn_rate=1e-3, epochs=300)
+    life_expectancy_model_vs_mean()

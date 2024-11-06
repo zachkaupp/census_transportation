@@ -1,5 +1,5 @@
 """
-life_expectancy.py
+acs_life_expectancy.py
 zachkaupp@gmail.com
 """
 
@@ -33,7 +33,7 @@ def main():
     labels = labels.unsqueeze(1)
     # convert to tensor dataset
     dataset = data_utils.TensorDataset(data, labels)
-    torch.save(dataset, fp+"tensor_dataset/life_expectancy.pt")
+    torch.save(dataset, fp+"tensor_dataset/acs_life_expectancy.pt")
 
 if __name__ == "__main__":
     main()
