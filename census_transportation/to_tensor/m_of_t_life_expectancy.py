@@ -1,5 +1,5 @@
 """
-acs_life_expectancy.py
+m_of_t_life_expectancy.py
 zachkaupp@gmail.com
 """
 
@@ -16,24 +16,24 @@ def main():
     """main()"""
     # first, import datasets
     acs_id_df = pd.read_pickle(fp+"clean/acs_id.pkl")
-    acs_data_df = pd.read_pickle(fp+"clean/acs_data.pkl") #pylint: disable=W0621
+    m_of_t_df = pd.read_pickle(fp+"clean/means_of_transport.pkl")
     le_df = pd.read_pickle(fp+"clean/life_expectancy.pkl")
     # make sure the rows match
     le_df = le_df[le_df["ID"].isin(acs_id_df["ID"].tolist())]
-    acs_data_df = acs_data_df[acs_id_df["ID"].isin(le_df["ID"].tolist())]
-    # combine labels (life expectancy) with data (acs)
-    acs_data_df.index = le_df.index
-    df = pd.concat([le_df,acs_data_df], axis=1)
+    le_df = le_df[le_df["ID"].isin(m_of_t_df["ID"].tolist())]
+    m_of_t_df = m_of_t_df[m_of_t_df["ID"].isin(le_df["ID"].tolist())]
+    # make sure values are sorted
+    le_df = le_df.sort_values(by=["ID"])
+    m_of_t_df = m_of_t_df.sort_values(by=["ID"])
     # convert to tensors
-    labels_df = df.iloc[:, 1]
-    data_df = df.iloc[:, 2:]
+    labels_df = le_df.iloc[:,1]
+    data_df = m_of_t_df.iloc[:,2:]
     labels = torch.from_numpy(labels_df.values.astype(np.float32))
     data = torch.from_numpy(data_df.values.astype(np.float32))
-    # make sure data has the right dimensions
     labels = labels.unsqueeze(1)
     # convert to tensor dataset
     dataset = data_utils.TensorDataset(data, labels)
-    torch.save(dataset, fp+"tensor_dataset/acs_life_expectancy.pt")
+    torch.save(dataset, fp+"tensor_dataset/m_of_t_life_expectancy.pt")
 
 if __name__ == "__main__":
     main()

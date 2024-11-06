@@ -25,7 +25,7 @@ def main():
     df.iloc[:,1:(len(df.columns))] = old_df.iloc[:,1:(len(old_df.columns))].astype(float)
 
     # match GEOID to IDs from acs_id
-    df["GEOID"] = df["GEOID"].apply(lambda x : x // 100000)
+    df["GEOID"] = df["GEOID"].apply(lambda x : x // 1000000)
 
     # group all data points in the same county
     df = df.groupby("GEOID", as_index=False).sum()
@@ -46,4 +46,4 @@ def main():
     return df
 
 if __name__ == "__main__":
-    main()
+    print(main().columns)

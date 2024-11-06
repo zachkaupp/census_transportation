@@ -8,9 +8,11 @@ from .data_process.travel_time import main as process_travel_time
 from .data_process.life_expectancy import main as process_life_expectancy
 from .data_process.means_of_transport import main as process_means_of_transport
 
-from .to_tensor.acs_life_expectancy import main as to_tensor_life_expectancy
+from .to_tensor.acs_life_expectancy import main as to_tensor_acs_life_expectancy
+from .to_tensor.m_of_t_life_expectancy import main as to_tensor_m_of_t_life_expectancy
 
-from .train.nn_acs_life_expectancy import main as train_life_expectancy
+from .train.nn_acs_life_expectancy import main as train_acs_life_expectancy
+from .train.nn_m_of_t_life_expectancy import main as train_m_of_t_life_expectancy
 
 
 def main():
@@ -49,20 +51,34 @@ def main():
     print("Converting dataframes to TensorDataset...")
 
     try:
-        to_tensor_life_expectancy()
-        print("Created life_expectancy.pt dataset")
+        to_tensor_acs_life_expectancy()
+        print("Created acs_life_expectancy.pt dataset")
     except Exception as e:
         print("Failed to create life_expectancy.pt dataset")
+        raise e
+
+    try:
+        to_tensor_m_of_t_life_expectancy()
+        print("Created m_of_t_life_expectancy.pt dataset")
+    except Exception as e:
+        print("Failed to create m_of_t_life_expectancy.pt dataset")
         raise e
 
     # train ----------------------------------------
     print("Training models...")
 
     try:
-        train_life_expectancy()
+        train_acs_life_expectancy()
         print("Trained nn_life_expectancy.pth")
     except Exception as e:
         print("Failed to train nn_life_expectancy.pth")
+        raise e
+
+    try:
+        train_m_of_t_life_expectancy()
+        print("Trained nn_m_of_t_life_expectancy.pth")
+    except Exception as e:
+        print("Failed to train nn_m_of_t_life_expectancy.pth")
         raise e
 
 if __name__ == "__main__":
